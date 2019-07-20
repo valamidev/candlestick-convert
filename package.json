@@ -1,0 +1,23 @@
+{
+  "name": "candlestick-convert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valamidev/candlestick-convert.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valamidev/candlestick-convert/issues"
+  },
+  "homepage": "https://github.com/valamidev/candlestick-convert#readme",
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
