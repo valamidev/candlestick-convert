@@ -31,40 +31,51 @@ function convert(candledata, base_frame = 60, new_frame = 300) {
   let close = 0;
   let low = 0;
   let volume = 0;
+  let open_time = 0;
+  let j = 0;
 
   // Candledata [time,open,high,low,close,volume]
-  //          0    1    2   3    4     5
+  //              0    1    2   3    4     5
   for (let i = 0; i < candledata.length; i++) {
     const candle = candledata[i];
 
-    // Add volume every step
-    volume += candle[5];
-    // Close is always close
-    close = candle[4];
-    // Set low at init or at a new frame
-    if (low == 0) {
+    //Get open values
+    if (j == 0) {
+      open_time = candle[0];
+      open = candle[1];
       low = candle[3];
+      volume = candle[5];
+    } else {
+      // Add volume non open step
+      volume += candle[5];
     }
+    // Count timeframe size
+    j++;
 
-    // Calculate high
-    high = Math.max(candle[2], high);
     // Calculate low
     low = Math.min(candle[3], low);
+    // Calculate high
+    high = Math.max(candle[2], high);
 
-    // When time is match with Timeframe
-    if (candle[0] % new_frame == 0) {
-      // Skip fragmented start
-      if (i >= convert_ratio) {
-        open = candledata[i - frame_lenght][1];
-      } else {
-        open = candledata[0][1];
+    // If we have too many skipped candle
+    if (candle[0] - open_time >= new_frame) {
+      open = candle[1];
+      low = candle[3];
+      high = candle[2];
+      volume = candle[5];
+    }
+
+    // When time is match with Timeframe or we match the frame_lenght
+    if (candle[0] % new_frame == 0 || j >= convert_ratio) {
+      // Add result only if we match timeframe
+      if (candle[0] % new_frame == 0) {
+        // Close is always close
+        close = candle[4];
+        result.push([candle[0], open, high, low, close, volume]);
       }
 
-      // Add result
-      result.push([candle[0], open, high, low, close, volume]);
-
       // Reset buffers
-      open = high = close = low = volume = 0;
+      open = high = close = low = volume = j = 0;
     }
   }
 
