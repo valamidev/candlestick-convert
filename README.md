@@ -1,6 +1,6 @@
 # candlestick-convert
  
-This package allow you to convert OHLC candles from given timeframe into a new timeframe.
+This package allow you to convert OHLC candles from given timeframe into a new timeframe. 
 
 **Supported formats:** 
 - CCXT OHLC  ``` [Object,Object] ```
@@ -10,6 +10,12 @@ This package allow you to convert OHLC candles from given timeframe into a new t
 - No Dependencies
 - Performance single for..loop() used
 - Skip missing candles
+
+**Limitations:**
+- There is no built in type safety!
+- Intervals only supported as second integers (1 minute = 60 , 2 minute = 120...)
+- Only possitive integer multiplication allowed between base interval and the new interval. e.g. 60->120, 60->180
+
 
 **Todo optional features:**
 - Return data integrity problems (missing timeframes)
@@ -32,6 +38,9 @@ const btc_usdt_1m = [
   ];
 
 // Convert to 2m Candles
+//   (candledata, base_frame = 60, new_frame = 300)  
+//   base_frame OHLC interval in second 
+//   new_frame  OHLC requested interval in second
 let btc_usdt_2m = Converter.array(btc_usdt_1m, 60, 120);
 
 
