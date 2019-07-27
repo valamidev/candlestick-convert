@@ -1,19 +1,17 @@
 # candlestick-convert
  
-**Candleconvert OHLC converter:**
-
 This package allow you to convert OHLC candles from given timeframe into a new timeframe.
 
-Supported formats: 
-- CCXT OHLC [Object,Object]
-- Array [[],[]]
+**Supported formats:** 
+- CCXT OHLC  ``` [Object,Object] ```
+- Array  ``` [[],[]] ```
 
-Features:
+**Features:**
 - No Dependencies
-- Performance single for..loop() used.
+- Performance single for..loop() used
 - Skip missing candles
 
-Todo optional features:
+**Todo optional features:**
 - Return data integrity problems (missing timeframes)
 - Add OHLC / 4 or Volume Weighted price calculation
 
