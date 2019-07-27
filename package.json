@@ -1,11 +1,18 @@
 {
   "name": "candlestick-convert",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest"
   },
+  "keywords": [
+    "ohlc",
+    "ccxt",
+    "stock",
+    "chart",
+    "analysis"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valamidev/candlestick-convert.git"
