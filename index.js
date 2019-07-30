@@ -104,7 +104,7 @@ const convert = {
     }
 
     // Sort Data to ascending
-    candledata.sort((a, b) => a[0] - b[0]);
+    candledata.sort((a, b) => a.time - b.time);
 
     // Buffer values
     let open = 0;
