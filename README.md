@@ -1,12 +1,14 @@
 # candlestick-convert
  
-This package allow you to convert OHLC candles from given timeframe into a new timeframe. 
+This package allow you to convert or create OHLC Charts.
 
 **Supported formats:** 
 - CCXT OHLC  ``` [Object,Object] ```
 - Array  ``` [[],[]] ```
 
 **Features:**
+- Candlestick support (by period of time)
+- Tick Chart support (by number of trades)
 - No Dependencies
 - Performance single for..loop() used
 - Skip missing candles
