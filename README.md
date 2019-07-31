@@ -14,7 +14,7 @@ This package allow you to convert or create OHLC Charts.
 - Skip missing candles
 
 **Limitations:**
-- There is no built in type safety!
+- There is no built in type safety errors!
 - Intervals only supported as second integers (1 minute = 60 , 2 minute = 120...)
 - Only possitive integer multiplication allowed between base interval and the new interval. e.g. 60->120, 60->180
 
@@ -26,6 +26,16 @@ This package allow you to convert or create OHLC Charts.
 **Install:**
 ```
 npm install candlestick-convert
+
+```
+
+**Available functions:**
+```
+convert.array(candledata, base_frame = 60, new_frame = 300) // input array() result array()
+convert.json(candledata, base_frame = 60, new_frame = 300) // input map() result map()
+convert.trade_to_candle(tradedata, intverval = 60) // input map() result map()
+convert.tick_chart(tradedata, tick_lenght = 5) // input map() result map() 
+
 ```
 
 **Usage:**
