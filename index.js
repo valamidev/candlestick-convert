@@ -39,6 +39,14 @@ const convert = {
     for (let i = 0; i < candledata.length; i++) {
       const candle = candledata[i];
 
+      // Type convert
+      candle[0] = Number(candle[0]);
+      candle[1] = Number(candle[1]);
+      candle[2] = Number(candle[2]);
+      candle[3] = Number(candle[3]);
+      candle[4] = Number(candle[4]);
+      candle[5] = Number(candle[5]);
+
       //Get open values
       if (j == 0) {
         open_time = candle[0];
@@ -119,6 +127,14 @@ const convert = {
     //              0    1    2   3    4     5
     for (let i = 0; i < candledata.length; i++) {
       const candle = candledata[i];
+
+      // Type convert
+      candle.time = Number(candle.time);
+      candle.open = Number(candle.open);
+      candle.high = Number(candle.high);
+      candle.low = Number(candle.low);
+      candle.close = Number(candle.close);
+      candle.volume = Number(candle.volume);
 
       //Get open values
       if (j == 0) {

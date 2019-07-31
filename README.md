@@ -53,6 +53,7 @@ const btc_usdt_1m = [
 //   (candledata, base_frame = 60, new_frame = 300)  
 //   base_frame OHLC interval in second 
 //   new_frame  OHLC requested interval in second
+
 let btc_usdt_2m = Converter.array(btc_usdt_1m, 60, 120);
 
 
