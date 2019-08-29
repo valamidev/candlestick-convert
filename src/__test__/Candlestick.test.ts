@@ -1,6 +1,5 @@
-"use strict";
 
-const Converter = require("./index");
+import { Converter } from '../index'
 
 const btc_usdt_1m = [
   [1563494940000, 10583.89, 10595.93, 10570.82, 10581, 41.40723],
@@ -81,62 +80,8 @@ const btc_usdt_1m = [
   [1563499440000, 10667.05, 10677, 10664, 10667, 24.816865],
   [1563499500000, 10666.82, 10670, 10644.68, 10650.32, 15.669372],
   [1563499560000, 10652.8, 10653.95, 10642.82, 10645.57, 10.898288],
-  [1563499620000, 10642.82, 10644.58, 10620, 10624.43, 36.320178]
+  [1563499620000, 10642.82, 10644.58, 10620, 10624.43, 36.320178],
 ];
-
-test("Candle Convert 2 min", () => {
-  let result = Converter.array(btc_usdt_1m, 60, 120);
-
-  expect(result[0]).toEqual([
-    1563495000000,
-    10583.89,
-    10598.17,
-    10570.82,
-    10583.71,
-    71.552952
-  ]);
-
-  expect(result[1]).toEqual([
-    1563495120000,
-    10583.74,
-    10584.6,
-    10558.57,
-    10562.48,
-    72.476421
-  ]);
-});
-
-test("Candle Convert 2 min with missing data", () => {
-  let btc_usdt_1m_missing = [
-    [1563494940000, 10583.89, 10595.93, 10570.82, 10581, 41.40723],
-    //  [1563495000000, 10581.14, 10598.17, 10580.6, 10583.71, 30.145722],
-    //[1563495060000, 10583.74, 10584.6, 10560, 10578, 31.324269],
-    [1563495120000, 10579.73, 10580.77, 10558.57, 10562.48, 41.152152]
-  ];
-
-  let result = Converter.array(btc_usdt_1m_missing, 60, 120);
-
-  expect(result[0]).toEqual([
-    1563495120000,
-    10579.73,
-    10580.77,
-    10558.57,
-    10562.48,
-    41.152152
-  ]);
-});
-
-test("Candle Convert 100 min", () => {
-  let result = Converter.array(btc_usdt_1m, 60, 60 * 100);
-
-  expect(result.length).toBe(0);
-});
-
-test("Candle Convert is not an array", () => {
-  expect(() => {
-    Converter.array(2, 60, 60 * 100);
-  }).toThrow();
-});
 
 const link_btc_1m = [
   {
@@ -153,7 +98,7 @@ const link_btc_1m = [
     high: 0.00024832,
     low: 0.00024795,
     close: 0.00024828,
-    volume: 3145
+    volume: 3145,
   },
   {
     time: 1563625800000,
@@ -161,7 +106,7 @@ const link_btc_1m = [
     high: 0.00024831,
     low: 0.00024789,
     close: 0.00024825,
-    volume: 2956
+    volume: 2956,
   },
   {
     time: 1563625860000,
@@ -169,7 +114,7 @@ const link_btc_1m = [
     high: 0.00024841,
     low: 0.0002479,
     close: 0.00024841,
-    volume: 3742
+    volume: 3742,
   },
   {
     time: 1563625920000,
@@ -177,7 +122,7 @@ const link_btc_1m = [
     high: 0.0002488,
     low: 0.00024771,
     close: 0.00024843,
-    volume: 8768
+    volume: 8768,
   },
   {
     time: 1563625980000,
@@ -185,7 +130,7 @@ const link_btc_1m = [
     high: 0.00024868,
     low: 0.00024773,
     close: 0.00024849,
-    volume: 7555
+    volume: 7555,
   },
   {
     time: 1563626100000,
@@ -193,7 +138,7 @@ const link_btc_1m = [
     high: 0.00024935,
     low: 0.00024873,
     close: 0.00024935,
-    volume: 4309
+    volume: 4309,
   },
   {
     time: 1563626040000,
@@ -201,12 +146,12 @@ const link_btc_1m = [
     high: 0.00024903,
     low: 0.00024828,
     close: 0.00024903,
-    volume: 5071
-  }
+    volume: 5071,
+  },
 ];
 
-test("Candle Convert json 2 min", () => {
-  let result = Converter.json(link_btc_1m, 60, 120);
+test('Candle Convert json 2 min', () => {
+  let result = Converter.candle_batch(link_btc_1m, 60, 120);
 
   expect(result[0]).toEqual({
     close: 0.00024831,
@@ -214,7 +159,7 @@ test("Candle Convert json 2 min", () => {
     low: 0.00024798,
     open: 0.00024824,
     time: 1563625680000,
-    volume: 2264
+    volume: 2264,
   });
 
   expect(result[1]).toEqual({
@@ -223,6 +168,8 @@ test("Candle Convert json 2 min", () => {
     low: 0.00024789,
     open: 0.00024817,
     time: 1563625800000,
-    volume: 6101
+    volume: 6101,
   });
 });
+
+
