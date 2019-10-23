@@ -99,7 +99,7 @@ const convert = {
     let result = [];
 
     if (convert_ratio < 1) {
-      throw "Convert cannot be smaller than 1";
+      throw "Target timeframe must be a positive multiple of original timeframe";
     }
 
     // Candledata Array check
