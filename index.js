@@ -155,7 +155,7 @@ const convert = {
       high = Math.max(candle.high, high);
 
       // If we have too many skipped candle
-      if (candle[0] - open_time >= new_frame) {
+      if (candle.open_time - open_time >= new_frame) {
         open = candle.open;
         low = candle.low;
         high = candle.high;
