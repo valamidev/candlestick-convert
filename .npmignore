@@ -1,0 +1,12 @@
+.babelrc
+.eslintignore
+.eslintrc.json
+.gitignore
+.lintstagedrc.json
+.nycrc
+.prettierrc.json
+
+coverage/
+src/
+__test__/
+examples/
