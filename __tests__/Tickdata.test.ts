@@ -1,6 +1,6 @@
 "use strict";
 
-const Converter = require("./index");
+import Converter, { Trade } from "../src/index";
 
 const adabnb_trades = [
   {
@@ -362,8 +362,14 @@ const adabnb_trades = [
   }
 ];
 
+const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
+  time: trade.time,
+  quantity: trade.quantity,
+  price: trade.price
+}));
+
 test("Tick Chart Convert 5 tick", () => {
-  let result = Converter.tick_chart(adabnb_trades, 5);
+  let result = Converter.tick_chart(filtered_adabnb_trades, 5);
 
   expect(result[0]).toEqual({
     time: 1564503137490,
@@ -376,7 +382,7 @@ test("Tick Chart Convert 5 tick", () => {
 });
 
 test("Trades convert to Candlestick", () => {
-  let result = Converter.trade_to_candle(adabnb_trades, 60);
+  let result = Converter.trade_to_candle(filtered_adabnb_trades, 60);
 
   expect(result[0]).toEqual({
     time: 1564502580000,

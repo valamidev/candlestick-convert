@@ -1,16 +1,33 @@
-"use strict";
+export interface OHLC {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
 
-const convert = {
-  array: (candledata, base_frame = 60, new_frame = 300) => {
+export interface Trade {
+  price: number;
+  quantity: number;
+  time: number;
+}
+
+export default {
+  array: (
+    candledata: number[][],
+    base_frame: number = 60,
+    new_frame: number = 300
+  ) => {
     base_frame *= 1000;
     new_frame *= 1000;
 
-    let convert_ratio = parseInt(new_frame / base_frame);
+    let convert_ratio = Math.floor(new_frame / base_frame);
 
-    let result = [];
+    let result: number[][] = [];
 
     if (convert_ratio < 1) {
-      throw "Convert cannot be smaller than 1";
+      throw new Error("Convert cannot be smaller than 1");
     }
 
     // Candledata Array check
@@ -90,13 +107,13 @@ const convert = {
     return result;
   },
 
-  json: (candledata, base_frame = 60, new_frame = 300) => {
+  json: (candledata: OHLC[], base_frame = 60, new_frame = 300) => {
     base_frame *= 1000;
     new_frame *= 1000;
 
-    let convert_ratio = parseInt(new_frame / base_frame);
+    let convert_ratio = Math.floor(new_frame / base_frame);
 
-    let result = [];
+    let result: OHLC[] = [];
 
     if (convert_ratio < 1) {
       throw "Target timeframe must be a positive multiple of original timeframe";
@@ -155,7 +172,7 @@ const convert = {
       high = Math.max(candle.high, high);
 
       // If we have too many skipped candle
-      if (candle.open_time - open_time >= new_frame) {
+      if (candle.time - open_time >= new_frame) {
         open = candle.open;
         low = candle.low;
         high = candle.high;
@@ -179,10 +196,10 @@ const convert = {
     return result;
   },
 
-  trade_to_candle: (tradedata, intverval = 60) => {
-    intverval *= 1000;
+  trade_to_candle: (tradedata: Trade[], intverval: number = 60) => {
+    intverval *= Math.floor(1000);
 
-    let result = [];
+    let result: OHLC[] = [];
 
     // Tradedata Array check
     if (Array.isArray(tradedata)) {
@@ -246,10 +263,10 @@ const convert = {
     return result;
   },
 
-  tick_chart: (tradedata, tick_lenght = 5) => {
-    let result = [];
+  tick_chart: (tradedata: Trade[], tick_lenght: number = 5) => {
+    let result: OHLC[] = [];
 
-    tick_lenght = parseInt(tick_lenght);
+    tick_lenght = Math.floor(tick_lenght);
 
     if (tick_lenght < 1) {
       throw new Error("Convert cannot be smaller than 1");
@@ -317,5 +334,3 @@ const convert = {
     return result;
   }
 };
-
-module.exports = convert;
