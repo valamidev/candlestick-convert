@@ -5,8 +5,10 @@
 .lintstagedrc.json
 .nycrc
 .prettierrc.json
+.tsconfig.json
+.jest.config.js
 
 coverage
 src
-__test__
+__tests__
 examples
