@@ -6,7 +6,7 @@
 .nycrc
 .prettierrc.json
 
-coverage/
-src/
-__test__/
-examples/
+coverage
+src
+__test__
+examples
