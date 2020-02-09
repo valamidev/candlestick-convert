@@ -1,7 +1,7 @@
 {
   "name": "candlestick-convert",
-  "version": "4.0.4",
-  "description": "OHLC Candlestick converter and batcher with Typescript support",
+  "version": "5.0.0",
+  "description": "OHLCV Candlestick converter and batcher with Typescript support",
   "main": "build/index.js",
   "scripts": {
     "prebuild": "tsc --build --clean",
@@ -12,6 +12,9 @@
   },
   "keywords": [
     "ohlc",
+    "ohlcv",
+    "tickchart",
+    "candlestick",
     "ccxt",
     "stock",
     "chart",
@@ -28,7 +31,9 @@
   },
   "homepage": "https://github.com/valamidev/candlestick-convert#readme",
   "devDependencies": {
+    "@types/jest": "^25.1.2",
     "jest": ">=25.0.0",
-    "ts-jest": ">=25.1.0"
+    "ts-jest": ">=25.1.0",
+    "typescript": "^3.7.5"
   }
 }

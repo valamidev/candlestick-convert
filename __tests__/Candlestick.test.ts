@@ -1,6 +1,6 @@
 "use strict";
 
-import Converter from "../src/index";
+import CConverter, { OHLCV } from "../src/index";
 
 const btc_usdt_1m = [
   [1563494940000, 10583.89, 10595.93, 10570.82, 10581, 41.40723],
@@ -85,7 +85,7 @@ const btc_usdt_1m = [
 ];
 
 test("Candle Convert 2 min", () => {
-  let result = Converter.array(btc_usdt_1m, 60, 120);
+  let result = CConverter.array(btc_usdt_1m, 60, 120);
 
   expect(result[0]).toEqual([
     1563495000000,
@@ -114,7 +114,7 @@ test("Candle Convert 2 min with missing data", () => {
     [1563495120000, 10579.73, 10580.77, 10558.57, 10562.48, 41.152152]
   ];
 
-  let result = Converter.array(btc_usdt_1m_missing, 60, 120);
+  let result = CConverter.array(btc_usdt_1m_missing, 60, 120);
 
   expect(result[0]).toEqual([
     1563495120000,
@@ -127,18 +127,18 @@ test("Candle Convert 2 min with missing data", () => {
 });
 
 test("Candle Convert 100 min", () => {
-  let result = Converter.array(btc_usdt_1m, 60, 60 * 100);
+  let result = CConverter.array(btc_usdt_1m, 60, 60 * 100);
 
   expect(result.length).toBe(0);
 });
 
 test("Candle Convert is not an array", () => {
   expect(() => {
-    Converter.array(2, 60, 60 * 100);
+    CConverter.array(2, 60, 60 * 100);
   }).toThrow();
 });
 
-const link_btc_1m = [
+const link_btc_1m: Array<OHLCV> = [
   {
     time: 1563625680000,
     open: 0.00024824,
@@ -206,7 +206,7 @@ const link_btc_1m = [
 ];
 
 test("Candle Convert json 2 min", () => {
-  let result = Converter.json(link_btc_1m, 60, 120);
+  let result = CConverter.json(link_btc_1m, 60, 120);
 
   expect(result[0]).toEqual({
     close: 0.00024831,

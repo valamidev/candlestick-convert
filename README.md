@@ -1,63 +1,51 @@
 # candlestick-convert
- 
-This package allow you to convert or create OHLC Charts.
 
-**Supported formats:** 
-- CCXT OHLC  ``` [Object,Object] ```
-- Array  ``` [[],[]] ```
+This package allow you to convert or batch OHLCV candlestick charts or creating them from trade data sets.
+
+**Supported formats:**
+
+- OHLCV Array `[[time,open,high,low,close,volume]]`
+- OHLCV JSON `[{time: number,open: number, high: number, low: number close: number, volume: number}]`
+- Trade JSON `[{price: number, quantity: number, time:number}]`
 
 **Features:**
-- Candlestick support (by period of time)
-- Tick Chart support (by number of trades)
+
+- Typescript support!
+- CCXT support
 - No Dependencies
-- Performance single for..loop() used
+- Performance single loop used
 - Skip missing candles
 
-**Limitations:**
-- There is no built in type safety errors!
+**Important!:**
+
 - Intervals only supported as second integers (1 minute = 60 , 2 minute = 120...)
-- Only possitive integer multiplication allowed between base interval and the new interval. e.g. 60->120, 60->180
-
-
-**Todo optional features:**
-- Return data integrity problems (missing timeframes)
-- Add OHLC / 4 or Volume Weighted price calculation
+- Only positive integer multiplication allowed between base interval and the new interval. e.g. 60->120, 60->180
 
 **Install:**
+
 ```
 npm install candlestick-convert
-
 ```
 
 **Available functions:**
-```
-convert.array(candledata, base_frame = 60, new_frame = 300) // input array() result array()
-convert.json(candledata, base_frame = 60, new_frame = 300) // input map() result map()
-convert.trade_to_candle(tradedata, intverval = 60) // input map() result map()
-convert.tick_chart(tradedata, tick_lenght = 5) // input map() result map() 
 
 ```
+import CConverter from "candlestick-convert";
+// const CConverter = require('candlestick-convert').default;
 
-**Usage:**
+CConverter.array(candledata: number[][], 60, 300) // return number[][]
+CConverter.json(candledata: OHLCV [], 60, 300) // return OHLCV[]
+CConverter.trade_to_candle(tradedata: Trade[], 60) // return OHLCV[]
+CConverter.tick_chart(tradedata: Trade[], 5) // return OHLCV[]
+
 ```
-const Converter = require("candlestick-convert");
 
-const btc_usdt_1m = [
-[1563495000000, 10581.14, 10598.17, 10580.6, 10583.71, 30.145722],
-  [1563495060000, 10583.74, 10584.6, 10560, 10578, 31.324269],
-  [1563495120000, 10579.73, 10580.77, 10558.57, 10562.48, 41.152152],
-  [1563495180000, 10561.56, 10583.74, 10557.69, 10583.26, 47.229129],
-  ];
+## Examples
 
-// Convert to 2m Candles
-//   (candledata, base_frame = 60, new_frame = 300)  
-//   base_frame OHLC interval in second 
-//   new_frame  OHLC requested interval in second
+**CCXT OHLCV (Typescript):**
 
-let btc_usdt_2m = Converter.array(btc_usdt_1m, 60, 120);
-
-
-/* CCXT OHLC support */
+```
+import CConverter from "candlestick-convert";
 
 const link_btc_1m = [
   {
@@ -77,11 +65,50 @@ const link_btc_1m = [
     volume: 3145
   }];
 
-// Convert to 2m Candles
-let link_btc_2m  = Converter.json(link_btc_1m, 60, 120);
+const baseFrame = 60; // 60 seconds
+const newFrame = 120; // 120 seconds
 
+// Convert to 2m Candles
+
+const link_btc_2m = CConverter.json(link_btc_1m, baseFrame, newFrame);
 ```
 
+**Tick Chart (Typescript):**
 
+```
+import CConverter, { Trade } from "../src/index";
 
+const adabnb_trades = [
+  {
+    time: "1564502620356",
+    side: "sell",
+    quantity: "4458",
+    price: "0.00224",
+    tradeId: "1221272"
+  },
+  {
+    time: "1564503133949",
+    side: "sell",
+    quantity: "3480",
+    price: "0.002242",
+    tradeId: "1221273"
+  },
+  {
+    time: "1564503134553",
+    side: "buy",
+    quantity: "51",
+    price: "0.002248",
+    tradeId: "1221274"
+  }];
 
+// Remove unused values ()
+
+const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
+  time: trade.time,
+  quantity: trade.quantity,
+  price: trade.price
+}));
+
+const batchSize = 2; // Every Candle consist 2 trade
+const tickChart2 = CConverter.tick_chart(filtered_adabnb_trades, batchSize);
+```

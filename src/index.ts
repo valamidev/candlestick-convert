@@ -1,4 +1,4 @@
-export interface OHLC {
+export interface OHLCV {
   time: number;
   open: number;
   high: number;
@@ -18,7 +18,7 @@ export default {
     candledata: number[][],
     base_frame: number = 60,
     new_frame: number = 300
-  ) => {
+  ): number[][] => {
     base_frame *= 1000;
     new_frame *= 1000;
 
@@ -107,13 +107,13 @@ export default {
     return result;
   },
 
-  json: (candledata: OHLC[], base_frame = 60, new_frame = 300) => {
+  json: (candledata: OHLCV[], base_frame = 60, new_frame = 300): OHLCV[] => {
     base_frame *= 1000;
     new_frame *= 1000;
 
     let convert_ratio = Math.floor(new_frame / base_frame);
 
-    let result: OHLC[] = [];
+    let result: OHLCV[] = [];
 
     if (convert_ratio < 1) {
       throw "Target timeframe must be a positive multiple of original timeframe";
@@ -196,10 +196,10 @@ export default {
     return result;
   },
 
-  trade_to_candle: (tradedata: Trade[], intverval: number = 60) => {
+  trade_to_candle: (tradedata: Trade[], intverval: number = 60): OHLCV[] => {
     intverval *= Math.floor(1000);
 
-    let result: OHLC[] = [];
+    let result: OHLCV[] = [];
 
     // Tradedata Array check
     if (Array.isArray(tradedata)) {
@@ -263,8 +263,8 @@ export default {
     return result;
   },
 
-  tick_chart: (tradedata: Trade[], tick_lenght: number = 5) => {
-    let result: OHLC[] = [];
+  tick_chart: (tradedata: Trade[], tick_lenght: number = 5): OHLCV[] => {
+    let result: OHLCV[] = [];
 
     tick_lenght = Math.floor(tick_lenght);
 
