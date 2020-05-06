@@ -1,14 +1,15 @@
 {
   "name": "candlestick-convert",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "OHLCV Candlestick converter and batcher with Typescript support",
   "main": "build/index.js",
   "scripts": {
-    "prebuild": "tsc --build --clean",
+    "prebuild": "rimraf build",
     "build": "tsc --build",
     "build:check": "node -e \"require('./build')\"",
-    "prepublishOnly": "npm test && npm run build && npm run build:check",
-    "test": "jest"
+    "prepublishOnly": "npm test && npm run coveralls && npm run build && npm run build:check",
+    "test": "jest",
+    "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "keywords": [
     "ohlc",
@@ -32,7 +33,9 @@
   "homepage": "https://github.com/valamidev/candlestick-convert#readme",
   "devDependencies": {
     "@types/jest": "^25.1.2",
+    "coveralls": "^3.1.0",
     "jest": ">=25.0.0",
+    "rimraf": "^3.0.2",
     "ts-jest": ">=25.1.0",
     "typescript": "^3.7.5"
   }

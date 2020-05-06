@@ -1,5 +1,9 @@
 # candlestick-convert
 
+[![Coverage Status](https://coveralls.io/repos/github/valamidev/candlestick-convert/badge.svg?branch=master)](https://coveralls.io/github/valamidev/candlestick-convert?branch=master)
+[![DeepScan grade](https://deepscan.io/api/teams/6761/projects/8875/branches/113561/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=6761&pid=8875&bid=113561)
+![npm](https://img.shields.io/npm/dy/candlestick-convert)
+
 This package allow you to batch OHLCV candlesticks or creating them from trade(tick) data sets.
 
 #### Supported formats:

@@ -1,6 +1,6 @@
 "use strict";
 
-import CConverter, { OHLCV, IOHLCV } from "../src/index";
+import CConverter, { IOHLCV } from "../src/index";
 
 const btc_usdt_1m = [
   [1563494940000, 10583.89, 10595.93, 10570.82, 10581, 41.40723],
