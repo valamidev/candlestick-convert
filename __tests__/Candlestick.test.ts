@@ -1,6 +1,6 @@
 "use strict";
 
-import CConverter, { OHLCV } from "../src/index";
+import CConverter, { OHLCV, IOHLCV } from "../src/index";
 
 const btc_usdt_1m = [
   [1563494940000, 10583.89, 10595.93, 10570.82, 10581, 41.40723],
@@ -138,7 +138,7 @@ test("Candle Convert is not an array", () => {
   }).toThrow();
 });
 
-const link_btc_1m: Array<OHLCV> = [
+const link_btc_1m: Array<IOHLCV> = [
   {
     time: 1563625680000,
     open: 0.00024824,

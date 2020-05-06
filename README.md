@@ -1,14 +1,14 @@
 # candlestick-convert
 
-This package allow you to convert or batch OHLCV candlestick charts or creating them from trade data sets.
+This package allow you to batch OHLCV candlesticks or creating them from trade(tick) data sets.
 
-**Supported formats:**
+#### Supported formats:
 
-- OHLCV Array `[[time,open,high,low,close,volume]]`
+- OHLCV (CCXT format) `[[time,open,high,low,close,volume]]`
 - OHLCV JSON `[{time: number,open: number, high: number, low: number close: number, volume: number}]`
 - Trade JSON `[{price: number, quantity: number, time:number}]`
 
-**Features:**
+#### Features:
 
 - Typescript support!
 - CCXT support
@@ -16,36 +16,62 @@ This package allow you to convert or batch OHLCV candlestick charts or creating 
 - Performance single loop used
 - Skip missing candles
 
-**Important!:**
+#### Important!:
 
 - Intervals only supported as second integers (1 minute = 60 , 2 minute = 120...)
 - Only positive integer multiplication allowed between base interval and the new interval. e.g. 60->120, 60->180
 
-**Install:**
+#### Install:
 
 ```
 npm install candlestick-convert
 ```
 
-**Available functions:**
+#### Available functions:
+```
+import {batchCandleArray, batchCandleJSON, batchTickToCandle, ticksToTickChart} from "candlestick-convert";
+
+batchCandleArray(candledata: OHLCV[], 60, 300) // return OHLCV[]
+batchCandleJSON(candledata: IOHLCV [], 60, 300) // return IOHLCV[]
+batchTicksToCandle(tradedata: TradeTick[], 60) // return IOHLCV[]
+ticksToTickChart(tradedata: TradeTick[], 5) // return IOHLCV[]
 
 ```
-import CConverter from "candlestick-convert";
-// const CConverter = require('candlestick-convert').default;
 
-CConverter.array(candledata: number[][], 60, 300) // return number[][]
-CConverter.json(candledata: OHLCV [], 60, 300) // return OHLCV[]
-CConverter.trade_to_candle(tradedata: Trade[], 60) // return OHLCV[]
-CConverter.tick_chart(tradedata: Trade[], 5) // return OHLCV[]
-
+#### Types
 ```
+export type IOHLCV = {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export type OHLCV = [
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+]
+
+export type TradeTick = {
+  price: number;
+  quantity: number;
+  time: number;
+}
+```
+
 
 ## Examples
 
-**CCXT OHLCV (Typescript):**
+**CCXT OHLCV:**
 
 ```
-import CConverter from "candlestick-convert";
+import {batchCandleJSON} from "candlestick-convert";
 
 const link_btc_1m = [
   {
@@ -70,13 +96,13 @@ const newFrame = 120; // 120 seconds
 
 // Convert to 2m Candles
 
-const link_btc_2m = CConverter.json(link_btc_1m, baseFrame, newFrame);
+const link_btc_2m = batchCandleJSON(link_btc_1m, baseFrame, newFrame);
 ```
 
-**Tick Chart (Typescript):**
+**Tick Chart:**
 
 ```
-import CConverter, { Trade } from "../src/index";
+import {ticksToTickChart, TradeTick} from "candlestick-convert";
 
 const adabnb_trades = [
   {
@@ -101,14 +127,13 @@ const adabnb_trades = [
     tradeId: "1221274"
   }];
 
-// Remove unused values ()
 
-const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
+const filtered_adabnb_trades: TradeTick[] = adabnb_trades.map((trade: any) => ({
   time: trade.time,
   quantity: trade.quantity,
   price: trade.price
 }));
 
-const batchSize = 2; // Every Candle consist 2 trade
-const tickChart2 = CConverter.tick_chart(filtered_adabnb_trades, batchSize);
+const batchSize = 2; // Every TickCandle consist 2 trade
+const tickChart = ticksToTickChart(filtered_adabnb_trades, batchSize);
 ```
