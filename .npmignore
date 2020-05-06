@@ -5,6 +5,7 @@
 .lintstagedrc.json
 .nycrc
 .prettierrc.json
+.coveralls.yml
 
 tsconfig.json
 jest.config.js
