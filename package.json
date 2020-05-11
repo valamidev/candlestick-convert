@@ -1,13 +1,13 @@
 {
   "name": "candlestick-convert",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "description": "OHLCV Candlestick converter and batcher with Typescript support",
   "main": "build/index.js",
   "scripts": {
     "prebuild": "rimraf build",
     "build": "tsc --build",
     "build:check": "node -e \"require('./build')\"",
-    "prepublishOnly": "npm test && npm run coveralls && npm run build && npm run build:check",
+    "prepublishOnly": "npm test && npm run build && npm run coveralls && npm run build && npm run build:check",
     "test": "jest",
     "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
