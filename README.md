@@ -32,7 +32,7 @@ npm install candlestick-convert
 ```
 
 #### Available functions:
-```
+```javascript
 import {batchCandleArray, batchCandleJSON, batchTickToCandle, ticksToTickChart} from "candlestick-convert";
 
 batchCandleArray(candledata: OHLCV[], 60, 300) // return OHLCV[]
@@ -43,7 +43,7 @@ ticksToTickChart(tradedata: TradeTick[], 5) // return IOHLCV[]
 ```
 
 #### Types
-```
+```javascript
 export type IOHLCV = {
   time: number;
   open: number;
@@ -74,7 +74,7 @@ export type TradeTick = {
 
 **CCXT OHLCV:**
 
-```
+```javascript
 import {batchCandleJSON} from "candlestick-convert";
 
 const link_btc_1m = [
@@ -105,7 +105,7 @@ const link_btc_2m = batchCandleJSON(link_btc_1m, baseFrame, newFrame);
 
 **Tick Chart:**
 
-```
+```javascript
 import {ticksToTickChart, TradeTick} from "candlestick-convert";
 
 const adabnb_trades = [
