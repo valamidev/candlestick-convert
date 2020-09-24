@@ -93,7 +93,7 @@ export const batchCandleArray = (candledata: OHLCV[],
       close = candle[OHLCVField.CLOSE];
       volume = 0;
       j = 1;
-      
+
     }
 
       // New Candle
@@ -114,15 +114,15 @@ export const batchCandleArray = (candledata: OHLCV[],
     low = Math.min(candle[OHLCVField.LOW], low);
     close = candle[OHLCVField.CLOSE];
     volume =  volume + candle[OHLCVField.VOLUME];
-    
+
     // Batch counter
-    
+
 
     if(j === convertRatio){
       result.push([timeOpen, open, high, low, close, volume]);
       timeOpen = null;
     }
-  
+
     j = j+1;
 
   }
@@ -173,7 +173,7 @@ export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60): I
   let low = 0;
   let volume = 0;
   let timeOpen = 0;
-  let j = 0;
+  let previousClose = null
 
   // Tradedata [time,side,quantity,price,tradeid]
   //              0    1    2   3    4     5
@@ -203,14 +203,15 @@ export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60): I
       close = trade.price;
     } else {
       result.push({ time: timeOpen, open, high, low, close, volume });
-      // Crate new candle
+      // Create new candle
       timeOpen = trade.time;
-      open = trade.price;
+      open = previousClose || trade.price;
       low = trade.price;
       high = trade.price;
       close = trade.price;
       volume = trade.quantity;
     }
+    previousClose = close
   }
 
   return result;
