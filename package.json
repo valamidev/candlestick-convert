@@ -33,8 +33,10 @@
   "homepage": "https://github.com/valamidev/candlestick-convert#readme",
   "devDependencies": {
     "@types/jest": "^25.1.2",
+    "@types/node-fetch": "^2.5.7",
     "coveralls": "^3.1.0",
     "jest": ">=25.0.0",
+    "node-fetch": "^2.6.1",
     "rimraf": "^3.0.2",
     "ts-jest": ">=25.1.0",
     "typescript": "^3.7.5"
