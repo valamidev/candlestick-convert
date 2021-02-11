@@ -33,7 +33,7 @@ npm install candlestick-convert
 
 #### Available functions:
 ```javascript
-import {batchCandleArray, batchCandleJSON, batchTickToCandle, ticksToTickChart} from "candlestick-convert";
+import {batchCandleArray, batchCandleJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
 
 batchCandleArray(candledata: OHLCV[], 60, 300) // return OHLCV[]
 batchCandleJSON(candledata: IOHLCV [], 60, 300) // return IOHLCV[]
