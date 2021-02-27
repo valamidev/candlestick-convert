@@ -149,7 +149,7 @@ export const batchCandleJSON = (candledata: IOHLCV[], baseFrame = 60, newFrame =
 }
 
 
-export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60): IOHLCV[] => {
+export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60, includeOpenCandle = false): IOHLCV[] => {
   interval *= Math.floor(1000);
 
   let result: IOHLCV[] = [];
@@ -173,7 +173,7 @@ export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60): I
   let low = 0;
   let volume = 0;
   let timeOpen = 0;
-  let previousClose = null
+  let previousClose = null;
 
   // Tradedata [time,side,quantity,price,tradeid]
   //              0    1    2   3    4     5
@@ -211,7 +211,11 @@ export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60): I
       close = trade.price;
       volume = trade.quantity;
     }
-    previousClose = close
+    previousClose = close;
+  }
+
+  if(previousClose && includeOpenCandle)  {
+    result.push({ time: timeOpen, open, high, low, close, volume });
   }
 
   return result;
