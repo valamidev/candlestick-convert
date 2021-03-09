@@ -1,6 +1,6 @@
 {
   "name": "candlestick-convert",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "description": "OHLCV Candlestick converter and batcher with Typescript support",
   "main": "build/index.js",
   "scripts": {
