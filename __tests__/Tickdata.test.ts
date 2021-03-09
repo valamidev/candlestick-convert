@@ -385,11 +385,25 @@ test("Trades convert to Candlestick", () => {
   let result = Converter.trade_to_candle(filtered_adabnb_trades, 60);
 
   expect(result[0]).toEqual({
-    time: 1564502580000,
+    time: 1564502580000, // 2019-07-30T16:03:00.000Z
     open: 0.00224,
     high: 0.00224,
     low: 0.00224,
     close: 0.00224,
     volume: 8916
   });
+
+  // 27 candles, without open (unfinished) candle
+  expect(result.length).toBe(27);
+
+  expect(result[26].time).toEqual(1564509540000); // 2019-07-30T17:59:00.000Z
+});
+
+test("Trades convert to Candlestick – including open candle", () => {
+  let result = Converter.trade_to_candle(filtered_adabnb_trades, 60, true);
+
+  // 27+1 candles, including open (unfinished) candle
+  expect(result.length).toBe(28);
+
+  expect(result[27].time).toEqual(1564509780000); // 2019-07-30T18:03:00.000Z
 });
