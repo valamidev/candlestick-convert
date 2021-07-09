@@ -35,12 +35,20 @@ npm install candlestick-convert
 ```javascript
 import {batchCandleArray, batchCandleJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
 
-batchCandleArray(candledata: OHLCV[], 60, 300) // return OHLCV[]
-batchCandleJSON(candledata: IOHLCV [], 60, 300) // return IOHLCV[]
-batchTicksToCandle(tradedata: TradeTick[], 60) // return IOHLCV[]
-ticksToTickChart(tradedata: TradeTick[], 5) // return IOHLCV[]
+batchCandleArray(candledata: OHLCV[], baseInterval = 60, targetInterval = 300, includeOpenCandle = false) 
+//return OHLCV[]
 
+batchCandleJSON(candledata: IOHLCV [], 60, 300) 
+// return IOHLCV[]
+
+batchTicksToCandle(tradedata: TradeTick[], 60,  includeOpenCandle = false) 
+// return IOHLCV[]
+
+ticksToTickChart(tradedata: TradeTick[], 5) 
+// return IOHLCV[]
 ```
+** includeOpenCandle allow to add a lastCandle not full candle based on the available information
+
 
 #### Types
 ```javascript

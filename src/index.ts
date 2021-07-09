@@ -34,9 +34,12 @@ export enum OHLCVField {
 export type Trade = TradeTick;
 
 
-export const batchCandleArray = (candledata: OHLCV[],
+export const batchCandleArray = (
+  candledata: OHLCV[],
   baseFrame: number = 60,
-  newFrame: number = 300): OHLCV[] => {
+  newFrame: number = 300,
+  includeOpenCandle = false
+): OHLCV[] => {
   const result: OHLCV[] = [];
   baseFrame *= 1000;
   newFrame *= 1000;
@@ -80,10 +83,10 @@ export const batchCandleArray = (candledata: OHLCV[],
 
 
     // First / Force New Candle
-    if(timeOpen === null){
+    if (timeOpen === null) {
       timeOpen = candle[OHLCVField.TIME];
 
-      if(candle[OHLCVField.TIME] % newFrame > 0){
+      if (candle[OHLCVField.TIME] % newFrame > 0) {
         timeOpen = candle[OHLCVField.TIME] - candle[OHLCVField.TIME] % newFrame;
       }
 
@@ -96,8 +99,8 @@ export const batchCandleArray = (candledata: OHLCV[],
 
     }
 
-      // New Candle
-    if( candle[OHLCVField.TIME] - candle[OHLCVField.TIME] % newFrame !== timeOpen){
+    // New Candle
+    if (candle[OHLCVField.TIME] - candle[OHLCVField.TIME] % newFrame !== timeOpen) {
 
       result.push([timeOpen, open, high, low, close, volume]);
 
@@ -113,17 +116,22 @@ export const batchCandleArray = (candledata: OHLCV[],
     high = Math.max(candle[OHLCVField.HIGH], high);
     low = Math.min(candle[OHLCVField.LOW], low);
     close = candle[OHLCVField.CLOSE];
-    volume =  volume + candle[OHLCVField.VOLUME];
+    volume = volume + candle[OHLCVField.VOLUME];
 
     // Batch counter
-
-
-    if(j === convertRatio){
+    if (j === convertRatio) {
+      result.push([timeOpen, open, high, low, close, volume]);
+      timeOpen = null;
+    } else if (includeOpenCandle === true && (i == candledata.length - 1)) {
+      // Allow OpenCandles
       result.push([timeOpen, open, high, low, close, volume]);
       timeOpen = null;
     }
 
-    j = j+1;
+
+
+
+    j = j + 1;
 
   }
 
@@ -134,14 +142,14 @@ export const batchCandleArray = (candledata: OHLCV[],
 
 export const batchCandleJSON = (candledata: IOHLCV[], baseFrame = 60, newFrame = 300): IOHLCV[] => {
 
-  const ohlcvArray: OHLCV[] = candledata.map(e => [e.time,e.open,e.high,e.low,e.close,e.volume]);
+  const ohlcvArray: OHLCV[] = candledata.map(e => [e.time, e.open, e.high, e.low, e.close, e.volume]);
 
-  const batchedOhlcvArray = batchCandleArray(ohlcvArray,baseFrame,newFrame);
+  const batchedOhlcvArray = batchCandleArray(ohlcvArray, baseFrame, newFrame);
 
   return batchedOhlcvArray.map(candle => ({
     time: candle[OHLCVField.TIME],
     open: candle[OHLCVField.OPEN],
-    high:candle[OHLCVField.HIGH],
+    high: candle[OHLCVField.HIGH],
     low: candle[OHLCVField.LOW],
     close: candle[OHLCVField.CLOSE],
     volume: candle[OHLCVField.VOLUME],
@@ -214,7 +222,7 @@ export const batchTicksToCandle = (tradedata: Trade[], interval: number = 60, in
     previousClose = close;
   }
 
-  if(previousClose && includeOpenCandle)  {
+  if (previousClose && includeOpenCandle) {
     result.push({ time: timeOpen, open, high, low, close, volume });
   }
 
