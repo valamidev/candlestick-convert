@@ -49,7 +49,7 @@ ticksToTickChart(tradedata: TradeTick[], 5)
 // return IOHLCV[]
 ```
 
-\*\* includeOpenCandle allow to add a the last candle if it is not completed
+\*\* includeOpenCandle allow non-complete candles in the result, useful for not normalized input data
 
 #### Types
 

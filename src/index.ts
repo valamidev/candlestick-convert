@@ -24,7 +24,89 @@ export enum OHLCVField {
   VOLUME = 5,
 }
 
+export type IntervalFunction = (timeStamp: number) => number;
+
 export type Trade = TradeTick;
+
+export const batchCandleArrayCustomInterval = (
+  candleData: OHLCV[],
+  baseFrame: number = 60,
+  intervalFunction: IntervalFunction,
+  includeOpenCandle = false
+): OHLCV[] => {
+  const result: OHLCV[] = [];
+  baseFrame *= 1000;
+
+  if (Array.isArray(candleData)) {
+    if (candleData.length == 0) {
+      return result;
+    }
+  } else {
+    throw new Error("candleData is empty or not an array!");
+  }
+
+  // Sort Data to ascending by Time
+  candleData.sort((a, b) => a[OHLCVField.TIME] - b[OHLCVField.TIME]);
+
+  // Buffer values
+  let open = 0;
+  let high = 0;
+  let close = 0;
+  let low = 0;
+  let volume = 0;
+  let timeOpen = null;
+  let j = 0;
+
+  for (let i = 0; i < candleData.length; i++) {
+    const candle = candleData[i];
+
+    // Type convert
+    candle[OHLCVField.TIME] = Number(candle[OHLCVField.TIME]);
+    candle[OHLCVField.OPEN] = Number(candle[OHLCVField.OPEN]);
+    candle[OHLCVField.HIGH] = Number(candle[OHLCVField.HIGH]);
+    candle[OHLCVField.LOW] = Number(candle[OHLCVField.LOW]);
+    candle[OHLCVField.CLOSE] = Number(candle[OHLCVField.CLOSE]);
+    candle[OHLCVField.VOLUME] = Number(candle[OHLCVField.VOLUME]);
+
+    // First / Force New Candle
+    if (timeOpen === null) {
+      timeOpen = intervalFunction(candle[OHLCVField.TIME]);
+
+      open = candle[OHLCVField.OPEN];
+      high = candle[OHLCVField.HIGH];
+      low = candle[OHLCVField.LOW];
+      close = candle[OHLCVField.CLOSE];
+      volume = 0;
+      j = 1;
+    }
+
+    // New Candle
+    if (intervalFunction(candle[OHLCVField.TIME]) !== timeOpen) {
+      result.push([timeOpen, open, high, low, close, volume]);
+
+      timeOpen = intervalFunction(candle[OHLCVField.TIME]);
+      open = candle[OHLCVField.OPEN];
+      high = candle[OHLCVField.HIGH];
+      low = candle[OHLCVField.LOW];
+      close = candle[OHLCVField.CLOSE];
+      volume = 0;
+      j = 1;
+    }
+
+    high = Math.max(candle[OHLCVField.HIGH], high);
+    low = Math.min(candle[OHLCVField.LOW], low);
+    close = candle[OHLCVField.CLOSE];
+    volume = volume + candle[OHLCVField.VOLUME];
+
+    if (i === candleData.length - 1 && includeOpenCandle) {
+      result.push([timeOpen, open, high, low, close, volume]);
+    }
+
+    j = j + 1;
+  }
+
+  return result;
+};
 
 export const batchCandleArray = (
   candleData: OHLCV[],
@@ -310,6 +392,7 @@ export const ticksToTickChart = (
 
 export default {
   array: batchCandleArray,
+  arrayCustomInterval: batchCandleArrayCustomInterval,
   json: batchCandleJSON,
   trade_to_candle: batchTicksToCandle,
   tick_chart: ticksToTickChart,
