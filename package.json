@@ -32,11 +32,11 @@
   },
   "homepage": "https://github.com/valamidev/candlestick-convert#readme",
   "devDependencies": {
-    "@types/jest": "^25.1.2",
-    "coveralls": "^3.1.0",
-    "jest": ">=25.0.0",
-    "rimraf": "^3.0.2",
-    "ts-jest": ">=25.1.0",
-    "typescript": "^3.7.5"
+    "@types/jest": "^29.5.0",
+    "coveralls": "^3.1.1",
+    "jest": ">=29.5.0",
+    "rimraf": "^4.4.1",
+    "ts-jest": ">=29.1.0",
+    "typescript": "^5.0.3"
   }
 }

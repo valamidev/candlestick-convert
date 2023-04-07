@@ -24,10 +24,92 @@ export enum OHLCVField {
   VOLUME = 5,
 }
 
+export type IntervalFunction = (timeStamp: number) => number;
+
 export type Trade = TradeTick;
 
+export const batchCandleArrayCustomInterval = (
+  candleData: OHLCV[],
+  baseFrame: number = 60,
+  intervalFunction: IntervalFunction,
+  includeOpenCandle = false
+): OHLCV[] => {
+  const result: OHLCV[] = [];
+  baseFrame *= 1000;
+
+  if (Array.isArray(candleData)) {
+    if (candleData.length == 0) {
+      return result;
+    }
+  } else {
+    throw new Error("candleData is empty or not an array!");
+  }
+
+  // Sort Data to ascending by Time
+  candleData.sort((a, b) => a[OHLCVField.TIME] - b[OHLCVField.TIME]);
+
+  // Buffer values
+  let open = 0;
+  let high = 0;
+  let close = 0;
+  let low = 0;
+  let volume = 0;
+  let timeOpen = null;
+  let j = 0;
+
+  for (let i = 0; i < candleData.length; i++) {
+    const candle = candleData[i];
+
+    // Type convert
+    candle[OHLCVField.TIME] = Number(candle[OHLCVField.TIME]);
+    candle[OHLCVField.OPEN] = Number(candle[OHLCVField.OPEN]);
+    candle[OHLCVField.HIGH] = Number(candle[OHLCVField.HIGH]);
+    candle[OHLCVField.LOW] = Number(candle[OHLCVField.LOW]);
+    candle[OHLCVField.CLOSE] = Number(candle[OHLCVField.CLOSE]);
+    candle[OHLCVField.VOLUME] = Number(candle[OHLCVField.VOLUME]);
+
+    // First / Force New Candle
+    if (timeOpen === null) {
+      timeOpen = intervalFunction(candle[OHLCVField.TIME]);
+
+      open = candle[OHLCVField.OPEN];
+      high = candle[OHLCVField.HIGH];
+      low = candle[OHLCVField.LOW];
+      close = candle[OHLCVField.CLOSE];
+      volume = 0;
+      j = 1;
+    }
+
+    // New Candle
+    if (intervalFunction(candle[OHLCVField.TIME]) !== timeOpen) {
+      result.push([timeOpen, open, high, low, close, volume]);
+
+      timeOpen = intervalFunction(candle[OHLCVField.TIME]);
+      open = candle[OHLCVField.OPEN];
+      high = candle[OHLCVField.HIGH];
+      low = candle[OHLCVField.LOW];
+      close = candle[OHLCVField.CLOSE];
+      volume = 0;
+      j = 1;
+    }
+
+    high = Math.max(candle[OHLCVField.HIGH], high);
+    low = Math.min(candle[OHLCVField.LOW], low);
+    close = candle[OHLCVField.CLOSE];
+    volume = volume + candle[OHLCVField.VOLUME];
+
+    if (i === candleData.length - 1 && includeOpenCandle) {
+      result.push([timeOpen, open, high, low, close, volume]);
+    }
+
+    j = j + 1;
+  }
+
+  return result;
+};
+
 export const batchCandleArray = (
-  candledata: OHLCV[],
+  candleData: OHLCV[],
   baseFrame: number = 60,
   newFrame: number = 300,
   includeOpenCandle = false
@@ -42,16 +124,16 @@ export const batchCandleArray = (
     throw new Error("Convert ratio should integer an >= 2");
   }
 
-  if (Array.isArray(candledata)) {
-    if (candledata.length == 0 || candledata.length < convertRatio) {
+  if (Array.isArray(candleData)) {
+    if (candleData.length == 0 || candleData.length < convertRatio) {
       return result;
     }
   } else {
-    throw new Error("Candledata is empty or not an array!");
+    throw new Error("candleData is empty or not an array!");
   }
 
   // Sort Data to ascending by Time
-  candledata.sort((a, b) => a[OHLCVField.TIME] - b[OHLCVField.TIME]);
+  candleData.sort((a, b) => a[OHLCVField.TIME] - b[OHLCVField.TIME]);
 
   // Buffer values
   let open = 0;
@@ -62,8 +144,8 @@ export const batchCandleArray = (
   let timeOpen = null;
   let j = 0;
 
-  for (let i = 0; i < candledata.length; i++) {
-    const candle = candledata[i];
+  for (let i = 0; i < candleData.length; i++) {
+    const candle = candleData[i];
 
     // Type convert
     candle[OHLCVField.TIME] = Number(candle[OHLCVField.TIME]);
@@ -115,7 +197,7 @@ export const batchCandleArray = (
     if (j === convertRatio) {
       result.push([timeOpen, open, high, low, close, volume]);
       timeOpen = null;
-    } else if (includeOpenCandle === true && i == candledata.length - 1) {
+    } else if (includeOpenCandle === true && i == candleData.length - 1) {
       // Allow OpenCandles
       result.push([timeOpen, open, high, low, close, volume]);
       timeOpen = null;
@@ -128,11 +210,11 @@ export const batchCandleArray = (
 };
 
 export const batchCandleJSON = (
-  candledata: IOHLCV[],
+  candleData: IOHLCV[],
   baseFrame = 60,
   newFrame = 300
 ): IOHLCV[] => {
-  const ohlcvArray: OHLCV[] = candledata.map((e) => [
+  const ohlcvArray: OHLCV[] = candleData.map((e) => [
     e.time,
     e.open,
     e.high,
@@ -154,7 +236,7 @@ export const batchCandleJSON = (
 };
 
 export const batchTicksToCandle = (
-  tradedata: Trade[],
+  tradeData: Trade[],
   interval: number = 60,
   includeOpenCandle = false,
   filterFn?: (trade: Trade) => boolean
@@ -164,8 +246,8 @@ export const batchTicksToCandle = (
   let result: IOHLCV[] = [];
 
   // Tradedata Array check
-  if (Array.isArray(tradedata)) {
-    if (tradedata.length == 0) {
+  if (Array.isArray(tradeData)) {
+    if (tradeData.length == 0) {
       return result;
     }
   } else {
@@ -173,10 +255,10 @@ export const batchTicksToCandle = (
   }
 
   // Sort Data to ascending
-  tradedata.sort((a, b) => a.time - b.time);
+  tradeData.sort((a, b) => a.time - b.time);
 
   if (filterFn) {
-    tradedata = tradedata.filter((e) => filterFn(e));
+    tradeData = tradeData.filter((e) => filterFn(e));
   }
 
   // Buffer values
@@ -188,10 +270,10 @@ export const batchTicksToCandle = (
   let timeOpen = 0;
   let previousClose = null;
 
-  // Tradedata [time,side,quantity,price,tradeid]
+  // TradeData [time,side,quantity,price,tradeId]
   //              0    1    2   3    4     5
-  for (let i = 0; i < tradedata.length; i++) {
-    const trade = tradedata[i];
+  for (let i = 0; i < tradeData.length; i++) {
+    const trade = tradeData[i];
 
     // Type convert
     trade.price = Number(trade.price);
@@ -208,7 +290,7 @@ export const batchTicksToCandle = (
       volume = trade.quantity;
     }
 
-    // We are still in the Candletime
+    // We are still in the CandleTime
     if (timeOpen == trade.time) {
       low = Math.min(trade.price, low);
       high = Math.max(trade.price, high);
@@ -235,7 +317,7 @@ export const batchTicksToCandle = (
 };
 
 export const ticksToTickChart = (
-  tradedata: Trade[],
+  tradeData: Trade[],
   tickSize: number = 5
 ): IOHLCV[] => {
   let result: IOHLCV[] = [];
@@ -246,17 +328,17 @@ export const ticksToTickChart = (
     throw new Error("Convert cannot be smaller than 1");
   }
 
-  // Candledata Array check
-  if (Array.isArray(tradedata)) {
-    if (tradedata.length == 0 || tradedata.length < tickSize) {
+  // candleData Array check
+  if (Array.isArray(tradeData)) {
+    if (tradeData.length == 0 || tradeData.length < tickSize) {
       return result;
     }
   } else {
-    throw new Error("Tradedata is not an array!");
+    throw new Error("TradeData is not an array!");
   }
 
   // Sort Data to ascending
-  tradedata.sort((a, b) => a.time - b.time);
+  tradeData.sort((a, b) => a.time - b.time);
 
   // Buffer values
   let open = 0;
@@ -266,10 +348,10 @@ export const ticksToTickChart = (
   let volume = 0;
   let j = 0;
 
-  // Tradedata [time,side,quantity,price,tradeId]
+  // TradeData [time,side,quantity,price,tradeId]
   //              0    1    2   3    4     5
-  for (let i = 0; i < tradedata.length; i++) {
-    const trade = tradedata[i];
+  for (let i = 0; i < tradeData.length; i++) {
+    const trade = tradeData[i];
 
     // Type convert
     trade.price = Number(trade.price);
@@ -286,7 +368,7 @@ export const ticksToTickChart = (
       // Add volume non open step
       volume += trade.quantity;
     }
-    // Count timeframe size
+    // Count timeFrame size
     j++;
 
     // Calculate low
@@ -310,6 +392,7 @@ export const ticksToTickChart = (
 
 export default {
   array: batchCandleArray,
+  arrayCustomInterval: batchCandleArrayCustomInterval,
   json: batchCandleJSON,
   trade_to_candle: batchTicksToCandle,
   tick_chart: ticksToTickChart,
