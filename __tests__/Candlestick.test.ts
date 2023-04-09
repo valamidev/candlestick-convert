@@ -52,7 +52,6 @@ test("Candle Convert array CustomInterval", () => {
 
   let result = CConverter.arrayCustomInterval(
     btc_usdt_1m,
-    60,
     intervalFunction,
     true
   );
