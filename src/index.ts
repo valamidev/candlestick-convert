@@ -30,12 +30,10 @@ export type Trade = TradeTick;
 
 export const batchCandleArrayCustomInterval = (
   candleData: OHLCV[],
-  baseFrame: number = 60,
   intervalFunction: IntervalFunction,
   includeOpenCandle = false
 ): OHLCV[] => {
   const result: OHLCV[] = [];
-  baseFrame *= 1000;
 
   if (Array.isArray(candleData)) {
     if (candleData.length == 0) {

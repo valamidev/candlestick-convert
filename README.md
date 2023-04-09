@@ -34,18 +34,21 @@ npm install candlestick-convert
 #### Available functions:
 
 ```javascript
-import {batchCandleArray, batchCandleJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
+import {batchCandleArray, batchCandleArrayCustomInterval, batchCandleJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
 
 batchCandleArray(candledata: OHLCV[], baseInterval = 60, targetInterval = 300, includeOpenCandle = false)
 //return OHLCV[]
 
-batchCandleJSON(candledata: IOHLCV [], 60, 300)
+batchCandleArrayCustomInterval(candleData: OHLCV[], intervalFunction: IntervalFunction, includeOpenCandle = false)
+//return OHLCV[]
+
+batchCandleJSON(candledata: IOHLCV [], baseInterval = 60, argetInterval = 300)
 // return IOHLCV[]
 
-batchTicksToCandle(tradedata: TradeTick[], 60,  includeOpenCandle = false)
+batchTicksToCandle(tradedata: TradeTick[], interval = 60,  includeOpenCandle = false)
 // return IOHLCV[]
 
-ticksToTickChart(tradedata: TradeTick[], 5)
+ticksToTickChart(tradedata: TradeTick[], numberOfTicks = 5)
 // return IOHLCV[]
 ```
 
@@ -64,6 +67,10 @@ export type IOHLCV = {
 };
 
 export type OHLCV = [number, number, number, number, number, number];
+// OpenTime, Open, High, Low, Close, Volume
+
+export type IntervalFunction = (timeStamp: number) => number;
+// return the OpenTime for the given timestamp
 
 export type TradeTick = {
   price: number,
