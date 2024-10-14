@@ -1,6 +1,6 @@
 "use strict";
 
-import Converter, { Trade } from "../src/index";
+import { batchTicksToCandle, ticksToTickChart, Trade } from "../src";
 
 const adabnb_trades = [
   {
@@ -369,7 +369,7 @@ const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
 }));
 
 test("Tick Chart Convert 5 tick", () => {
-  let result = Converter.tick_chart(filtered_adabnb_trades, 5);
+  let result = ticksToTickChart(filtered_adabnb_trades, 5);
 
   expect(result[0]).toEqual({
     time: 1564503137490,
@@ -382,7 +382,7 @@ test("Tick Chart Convert 5 tick", () => {
 });
 
 test("Trades convert to Candlestick", () => {
-  let result = Converter.trade_to_candle(filtered_adabnb_trades, 60);
+  let result = batchTicksToCandle(filtered_adabnb_trades, 60);
 
   expect(result[0]).toEqual({
     time: 1564502580000, // 2019-07-30T16:03:00.000Z
@@ -400,7 +400,7 @@ test("Trades convert to Candlestick", () => {
 });
 
 test("Trades convert to Candlestick, with filter", () => {
-  let result = Converter.trade_to_candle(
+  let result = batchTicksToCandle(
     filtered_adabnb_trades,
     60,
     false,
@@ -425,7 +425,7 @@ test("Trades convert to Candlestick, with filter", () => {
 });
 
 test("Trades convert to Candlestick – including open candle", () => {
-  let result = Converter.trade_to_candle(filtered_adabnb_trades, 60, true);
+  let result = batchTicksToCandle(filtered_adabnb_trades, 60, true);
 
   // 27+1 candles, including open (unfinished) candle
   expect(result.length).toBe(28);
