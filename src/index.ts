@@ -292,7 +292,9 @@ export const batchTicksToCandle = (
     if (timeOpen == trade.time) {
       low = Math.min(trade.price, low);
       high = Math.max(trade.price, high);
-      volume += trade.quantity;
+      if (i > 0) {
+        volume += trade.quantity;
+      }
       close = trade.price;
     } else {
       result.push({ time: timeOpen, open, high, low, close, volume });

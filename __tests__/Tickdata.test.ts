@@ -390,7 +390,7 @@ test("Trades convert to Candlestick", () => {
     high: 0.00224,
     low: 0.00224,
     close: 0.00224,
-    volume: 8916,
+    volume: 4458,
   });
 
   // 27 candles, without open (unfinished) candle
@@ -415,7 +415,7 @@ test("Trades convert to Candlestick, with filter", () => {
     high: 0.00224,
     low: 0.00224,
     close: 0.00224,
-    volume: 8916,
+    volume: 4458,
   });
 
   // 24 candles, without open (unfinished) candle
