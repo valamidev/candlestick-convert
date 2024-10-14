@@ -1,6 +1,12 @@
 "use strict";
 
-import CConverter, { IOHLCV, batchCandleArray, OHLCV } from "../src/index";
+import {
+  OHLCV,
+  batchCandlesWithCustomInterval,
+  batchCandles,
+  IOHLCV,
+  batchCandlesJSON,
+} from "../src";
 
 // From Binance
 const btc_usdt_1m: OHLCV[] = [
@@ -50,7 +56,7 @@ test("Candle Convert array CustomInterval", () => {
     }
   };
 
-  let result = CConverter.arrayCustomInterval(
+  let result = batchCandlesWithCustomInterval(
     btc_usdt_1m,
     intervalFunction,
     true
@@ -66,7 +72,7 @@ test("Candle Convert array CustomInterval", () => {
 });
 
 test("Candle Convert 1m to 5m", () => {
-  const result = batchCandleArray(btc_usdt_1m, 60, 5 * 60);
+  const result = batchCandles(btc_usdt_1m, 60, 5 * 60);
 
   expect(result[4]).toEqual(btc_usdt_5m[0]);
 
@@ -74,7 +80,7 @@ test("Candle Convert 1m to 5m", () => {
 });
 
 test("Candle Convert 1m to 5m#withOpenCandles", () => {
-  const result = batchCandleArray(btc_usdt_1m, 60, 5 * 60, true);
+  const result = batchCandles(btc_usdt_1m, 60, 5 * 60, true);
 
   expect(result[4]).toEqual(btc_usdt_5m[0]);
 
@@ -90,7 +96,7 @@ test("Candle Convert 1m to 5m with missing values", () => {
   incompleteArray.splice(13, 1);
   incompleteArray.splice(22, 1);
 
-  const result = batchCandleArray(incompleteArray, 60, 5 * 60);
+  const result = batchCandles(incompleteArray, 60, 5 * 60);
 
   expect(incompleteArray.length).toBeLessThan(btc_usdt_1m.length);
   expect(result).toHaveLength(6);
@@ -124,7 +130,7 @@ const candle4h: OHLCV[] = [
 ];
 
 test("Candle Convert 1Day", () => {
-  let result = batchCandleArray(candle4h, 4 * 60 * 60, 24 * 60 * 60);
+  let result = batchCandles(candle4h, 4 * 60 * 60, 24 * 60 * 60);
 
   expect(result[0]).toEqual([
     1588204800000, 215.42830423, 227.13385486, 202.0834746, 206.35436145,
@@ -200,7 +206,7 @@ const link_btc_1m: Array<IOHLCV> = [
 ];
 
 test("Candle Convert json 2 min", () => {
-  let result = CConverter.json(link_btc_1m, 60, 120);
+  let result = batchCandlesJSON(link_btc_1m, 60, 120);
 
   expect(result[0]).toEqual({
     close: 0.00024828,

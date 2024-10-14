@@ -6,15 +6,20 @@
 
 This package allows you to batch OHLCV candlesticks or create them from trade (tick) datasets.
 
+#### Breaking Changes
+
+Version 7.x introduces many breaking changes compared to version 6.x.x.
+
 #### Supported formats:
 
 - OHLCV (CCXT format) `[[time,open,high,low,close,volume]]`
 - OHLCV JSON `[{time: number,open: number, high: number, low: number close: number, volume: number}]`
-- Trade JSON `[{price: number, quantity: number, time:number}]`
+- Tick JSON `[{price: number, quantity: number, time:number}]`
+- Trade JSON `[{price: number, quantity: number, time:number, side: number}]`
 
 #### Features:
 
-- Typescript support!
+- Typescript
 - CCXT support
 - No Dependencies
 - Performance single loop used
@@ -34,15 +39,15 @@ npm install candlestick-convert
 #### Available functions:
 
 ```javascript
-import {batchCandleArray, batchCandleArrayCustomInterval, batchCandleJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
+import {batchCandles, batchCandlesWithCustomInterval, batchCandlesJSON, batchTicksToCandle, ticksToTickChart} from "candlestick-convert";
 
-batchCandleArray(candledata: OHLCV[], baseInterval = 60, targetInterval = 300, includeOpenCandle = false)
+batchCandles(candledata: OHLCV[], baseInterval = 60, targetInterval = 300, includeOpenCandle = false)
 //return OHLCV[]
 
-batchCandleArrayCustomInterval(candleData: OHLCV[], intervalFunction: IntervalFunction, includeOpenCandle = false)
+batchCandlesWithCustomInterval(candleData: OHLCV[], intervalFunction: IntervalFunction, includeOpenCandle = false)
 //return OHLCV[]
 
-batchCandleJSON(candledata: IOHLCV [], baseInterval = 60, argetInterval = 300)
+batchCandlesJSON(candledata: IOHLCV [], baseInterval = 60, argetInterval = 300)
 // return IOHLCV[]
 
 batchTicksToCandle(tradedata: TradeTick[], interval = 60,  includeOpenCandle = false)
@@ -50,6 +55,9 @@ batchTicksToCandle(tradedata: TradeTick[], interval = 60,  includeOpenCandle = f
 
 ticksToTickChart(tradedata: TradeTick[], numberOfTicks = 5)
 // return IOHLCV[]
+
+batchTradeToExtCandle(tradedata: Trade[], interval = 60,  includeOpenCandle = false)
+// return ExtIOHLCV[]
 ```
 
 \*\* includeOpenCandle allow non-complete candles in the result, useful for not normalized input data
@@ -66,17 +74,44 @@ export type IOHLCV = {
   volume: number,
 };
 
-export type OHLCV = [number, number, number, number, number, number];
-// OpenTime, Open, High, Low, Close, Volume
+export type ExtIOHLCV = {
+  time: number,
+  open: number,
+  high: number,
+  low: number,
+  close: number,
+  volume: number,
+  buyVolume: number,
+  tx: number,
+  buyTx: number,
+};
 
-export type IntervalFunction = (timeStamp: number) => number;
-// return the OpenTime for the given timestamp
+export const TradeSide = {
+  BUY: 0,
+  SELL: 1,
+};
 
 export type TradeTick = {
-  price: number,
-  quantity: number,
-  time: number,
+  price: number;
+  quantity: number;
+  time: number;
 };
+
+export type Trade = {
+  price: number;
+  quantity: number;
+  time: number;
+  side: number;
+};
+
+export enum OHLCVField {
+  TIME = 0,
+  OPEN = 1,
+  HIGH = 2,
+  LOW = 3,
+  CLOSE = 4,
+  VOLUME = 5,
+}
 ```
 
 ## Examples
@@ -113,10 +148,10 @@ const newFrame = 120; // 120 seconds
 const link_btc_2m = batchCandleJSON(link_btc_1m, baseFrame, newFrame);
 ```
 
-**Tick Chart:**
+**Extended Candles from Trades:**
 
 ```javascript
-import { ticksToTickChart, TradeTick } from "candlestick-convert";
+import { batchTradeToExtCandle, Trade } from "candlestick-convert";
 
 const adabnb_trades = [
   {
@@ -140,14 +175,44 @@ const adabnb_trades = [
     price: "0.002248",
     tradeId: "1221274",
   },
+  // ... more data
 ];
 
-const filtered_adabnb_trades: TradeTick[] = adabnb_trades.map((trade: any) => ({
+const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
   time: trade.time,
   quantity: trade.quantity,
   price: trade.price,
+  side: trade.side === "buy" ? 0 : 1,
 }));
 
-const batchSize = 2; // Every TickCandle consist 2 trade
-const tickChart = ticksToTickChart(filtered_adabnb_trades, batchSize);
+// 1 minute (60 second) Candles
+const candles1m = batchTradeToExtCandle(filtered_adabnb_trades, 60);
+
+/* Result:
+[
+  {
+    time: 1564502580000, // 2019-07-30T16:03:00.000Z
+    open: 0.00224,
+    high: 0.00224,
+    low: 0.00224,
+    close: 0.00224,
+    volume: 4458,
+    buyVolume: 0,
+    tx: 1,
+    buyTx: 0,
+  },
+  {
+    time: 1564503120000,
+    open: 0.00224,
+    high: 0.002248,
+    low: 0.002242,
+    close: 0.002248,
+    volume: 4949,
+    buyVolume: 103,
+    tx: 3,
+    buyTx: 2,
+  }
+]
+
+
 ```
