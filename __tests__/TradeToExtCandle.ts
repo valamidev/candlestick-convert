@@ -1,6 +1,11 @@
 "use strict";
 
-import { batchTicksToCandle, ticksToTickChart, TradeTick } from "../src";
+import {
+  batchTicksToCandle,
+  batchTradeToExtCandle,
+  Trade,
+  TradeTick,
+} from "../src";
 
 const adabnb_trades = [
   {
@@ -362,27 +367,15 @@ const adabnb_trades = [
   },
 ];
 
-const filtered_adabnb_trades: TradeTick[] = adabnb_trades.map((trade: any) => ({
+const filtered_adabnb_trades: Trade[] = adabnb_trades.map((trade: any) => ({
   time: trade.time,
   quantity: trade.quantity,
   price: trade.price,
+  side: trade.side === "buy" ? 0 : 1,
 }));
 
-test("Tick Chart Convert 5 tick", () => {
-  let result = ticksToTickChart(filtered_adabnb_trades, 5);
-
-  expect(result[0]).toEqual({
-    time: 1564503137490,
-    open: 0.00224,
-    high: 0.002248,
-    low: 0.00224,
-    close: 0.002248,
-    volume: 9407,
-  });
-});
-
 test("Trades convert to Candlestick", () => {
-  let result = batchTicksToCandle(filtered_adabnb_trades, 60);
+  let result = batchTradeToExtCandle(filtered_adabnb_trades, 60);
 
   expect(result[0]).toEqual({
     time: 1564502580000, // 2019-07-30T16:03:00.000Z
@@ -391,6 +384,33 @@ test("Trades convert to Candlestick", () => {
     low: 0.00224,
     close: 0.00224,
     volume: 4458,
+    buyVolume: 0,
+    tx: 1,
+    buyTx: 0,
+  });
+
+  expect(result[1]).toEqual({
+    buyTx: 2,
+    buyVolume: 103,
+    close: 0.002248,
+    high: 0.002248,
+    low: 0.002242,
+    open: 0.00224,
+    time: 1564503120000,
+    tx: 3,
+    volume: 4949,
+  });
+
+  expect(result[2]).toEqual({
+    buyTx: 0,
+    buyVolume: 0,
+    close: 0.002243,
+    high: 0.002244,
+    low: 0.002243,
+    open: 0.002248,
+    time: 1564503300000,
+    tx: 2,
+    volume: 21121,
   });
 
   // 27 candles, without open (unfinished) candle
@@ -400,7 +420,7 @@ test("Trades convert to Candlestick", () => {
 });
 
 test("Trades convert to Candlestick, with filter", () => {
-  let result = batchTicksToCandle(
+  let result = batchTradeToExtCandle(
     filtered_adabnb_trades,
     60,
     false,
@@ -416,6 +436,9 @@ test("Trades convert to Candlestick, with filter", () => {
     low: 0.00224,
     close: 0.00224,
     volume: 4458,
+    buyVolume: 0,
+    tx: 1,
+    buyTx: 0,
   });
 
   // 24 candles, without open (unfinished) candle
@@ -425,7 +448,7 @@ test("Trades convert to Candlestick, with filter", () => {
 });
 
 test("Trades convert to Candlestick – including open candle", () => {
-  let result = batchTicksToCandle(filtered_adabnb_trades, 60, true);
+  let result = batchTradeToExtCandle(filtered_adabnb_trades, 60, true);
 
   // 27+1 candles, including open (unfinished) candle
   expect(result.length).toBe(28);

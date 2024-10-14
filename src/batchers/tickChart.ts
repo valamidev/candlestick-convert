@@ -1,7 +1,7 @@
-import { Trade, IOHLCV } from "../interfaces";
+import { TradeTick, IOHLCV } from "../interfaces";
 
 export const ticksToTickChart = (
-  tradeData: Trade[],
+  tradeData: TradeTick[],
   tickSize: number = 5
 ): IOHLCV[] => {
   let result: IOHLCV[] = [];
